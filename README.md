@@ -1,6 +1,3 @@
-Вот comprehensive README.md для твоего проекта:
-
-```markdown
 # Rust Hash Finder
 
 [![Rust](https://img.shields.io/badge/rust-1.90%2B-orange.svg)](https://www.rust-lang.org/)
@@ -251,4 +248,3 @@ Built as part of a Rust developer internship task for demonstrating:
 ---
 
 **Note**: This is a computational task for educational purposes. Finding hashes with many trailing zeros can be time-consuming.
-```
