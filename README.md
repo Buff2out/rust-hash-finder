@@ -21,7 +21,7 @@ High-performance SHA-256 hash finder that searches for hashes ending with a spec
 
 ```
 
-git clone 
+git clone git@github.com:Buff2out/rust-hash-finder.git
 cd rust-hash-finder
 cargo build --release
 
