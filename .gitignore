@@ -1,1 +1,4 @@
 /target
+hash-finder-atomics
+hash-finder-crossbeam
+benchmark.md

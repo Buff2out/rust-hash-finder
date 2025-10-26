@@ -29,7 +29,8 @@ pub fn find_hashes(zeros: usize, max_results: usize) -> Vec<(u64, String)> {
     
     let found_count = Arc::new(AtomicUsize::new(0));
     let found_count_clone = Arc::clone(&found_count);
-    let results: Arc<std::sync::Mutex<Vec<(u64, String)>>> = Arc::new(std::sync::Mutex::new(Vec::new()));
+    let results: Arc<std::sync::Mutex<Vec<(u64, String)>>> = 
+        Arc::new(std::sync::Mutex::new(Vec::new()));
     let results_clone = Arc::clone(&results);
     let suffix = "0".repeat(zeros);
     
@@ -49,7 +50,9 @@ pub fn find_hashes(zeros: usize, max_results: usize) -> Vec<(u64, String)> {
                 
                 if current < max_results {
                     debug!("Found hash: num={}, hash={}", num, hash);
-                    results_clone.lock().unwrap().push((num, hash));
+                    if let Ok(mut guard) = results_clone.lock() {
+                        guard.push((num, hash));
+                    }
                 }
                 
                 if current + 1 >= max_results {
@@ -61,9 +64,18 @@ pub fn find_hashes(zeros: usize, max_results: usize) -> Vec<(u64, String)> {
             false
         });
     
-    let results = Arc::try_unwrap(results).unwrap().into_inner().unwrap();
-    info!("Search completed, found {} results", results.len());
-    results
+    match Arc::try_unwrap(results) {
+        Ok(mutex) => {
+            let results = mutex.into_inner().unwrap_or_default();
+            info!("Search completed, found {} results", results.len());
+            results
+        }
+        Err(arc) => {
+            let results = arc.lock().unwrap().clone();
+            warn!("Had to clone results (Arc still has references)");
+            results
+        }
+    }
 }
 
 #[cfg(feature = "crossbeam")]
